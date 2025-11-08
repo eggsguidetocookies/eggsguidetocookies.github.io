@@ -1,62 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Toll House Chocolate Chip Cookies</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tall House Cookie Builder</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind for custom colors and font -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#964B00', // Dark Brown/Gingerbread
+                        'secondary': '#F0F0F0', // Light background
+                        'accent': '#E5E5E5', // Slightly darker highlight
+                        'ginger': '#CC6600',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for animations and aesthetics */
+        body {
+            background-color: #f7fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .step-container {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            margin-bottom: 1.5rem;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #CC6600; /* Gingerbread border */
+        }
+
+        .step-container.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .step-title {
+            color: #964B00;
+            font-weight: 700;
+            border-bottom: 2px solid #E5E5E5;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .ingredient-list li {
+            padding: 0.25rem 0;
+            border-bottom: 1px dashed #E5E5E5;
+        }
+
+        /* Button styling */
+        .nav-btn {
+            transition: all 0.2s ease-in-out;
+            font-weight: 600;
+            box-shadow: 0 4px #CC6600;
+        }
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px #CC6600;
+        }
+        .nav-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px #CC6600;
+        }
+        .nav-btn:disabled {
+            background-color: #a0a0a0;
+            box-shadow: 0 4px #707070;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .header-bg {
+            background: linear-gradient(135deg, #CC6600 0%, #964B00 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            .max-w-3xl {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
-<body>
-  <div class="container">
-    <h1>Toll House Chocolate Chip Cookies</h1>
+<body class="bg-secondary">
 
-    <div class="tabs">
-      <button class="tab-button active" data-tab="ingredients">Ingredients</button>
-      <button class="tab-button" data-tab="step1">Step 1</button>
-      <button class="tab-button" data-tab="step2">Step 2</button>
-      <button class="tab-button" data-tab="step3">Step 3</button>
-      <button class="tab-button" data-tab="step4">Step 4</button>
+    <div class="max-w-3xl w-full">
+        <!-- Header -->
+        <header class="header-bg rounded-t-xl text-center mb-6">
+            <h1 class="text-4xl font-extrabold tracking-tight">
+                Tall House Cookie Blueprint
+            </h1>
+            <p class="text-white text-opacity-80 mt-2">Sturdy, No-Spread Construction Cookies</p>
+        </header>
+
+        <!-- Main Content Area / Steps -->
+        <div id="steps-content" class="p-4">
+            <!-- Steps will be injected here by JavaScript -->
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between p-4 bg-white rounded-b-xl shadow-lg border-t border-accent">
+            <button id="prevBtn" class="nav-btn bg-ginger text-white py-2 px-6 rounded-lg focus:outline-none" disabled>
+                &larr; Previous
+            </button>
+            <button id="nextBtn" class="nav-btn bg-ginger text-white py-2 px-6 rounded-lg focus:outline-none">
+                Next Step &rarr;
+            </button>
+        </div>
+
+        <!-- Info Box for Ingredients/Yield -->
+        <div id="infoBox" class="mt-8 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-sm text-gray-700 rounded-lg shadow-md">
+            <p class="font-bold">Yield:</p> 1 sturdy tall cookie house. <span class="block mt-1">Make sure you have your house template pieces ready before starting!</span>
+        </div>
     </div>
 
-    <div class="tab-content" id="ingredients">
-      <h2>Ingredients (yields about 5 dozen cookies) *</h2>
-      <ul>
-        <li>2 ¼ cups all-purpose flour  [oai_citation:1‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</li>
-        <li>1 teaspoon baking soda  [oai_citation:2‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</li>
-        <li>1 teaspoon salt  [oai_citation:3‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</li>
-        <li>1 cup (2 sticks) butter, softened  [oai_citation:4‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</li>
-        <li>¾ cup granulated sugar  [oai_citation:5‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</li>
-        <li>¾ cup packed brown sugar  [oai_citation:6‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</li>
-        <li>1 teaspoon vanilla extract  [oai_citation:7‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</li>
-        <li>2 large eggs  [oai_citation:8‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</li>
-        <li>2 cups (12‐oz package) semi-sweet chocolate morsels/chips  [oai_citation:9‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</li>
-        <li>1 cup chopped nuts (optional)  [oai_citation:10‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</li>
-      </ul>
-      <p>* Yields approximately 5 dozen (i.e., ~60) cookies if you drop by rounded tablespoons.  [oai_citation:11‡Ideal Food Baskets](https://www.idealfoodbaskets.com/recipes/recipe-details/5771?utm_source=chatgpt.com)</p>
-    </div>
+    <script>
+        // --- DATA STRUCTURE FOR STEPS ---
+        const stepsData = [
+            {
+                title: "1. Gather Ingredients",
+                content: `
+                    <p class="text-gray-700 mb-4">This recipe is designed for maximum structural integrity. Using unsalted butter and omitting leavening agents prevents spreading.</p>
+                    <h3 class="text-lg font-semibold text-primary mb-2">Cookie Dough Ingredients:</h3>
+                    <ul class="ingredient-list list-none pl-0 text-gray-800">
+                        <li><span class="font-bold">2 1/4 cups (270g)</span> All-Purpose Flour (plus more for dusting)</li>
+                        <li><span class="font-bold">1/2 cup (113g)</span> Unsalted Butter, very soft</li>
+                        <li><span class="font-bold">1 cup (200g)</span> Granulated Sugar</li>
+                        <li><span class="font-bold">1 large</span> Egg</li>
+                        <li><span class="font-bold">1/2 cup (120ml)</span> Dark Molasses or Corn Syrup</li>
+                        <li><span class="font-bold">2 tsp</span> Ground Ginger</li>
+                        <li><span class="font-bold">1 tsp</span> Ground Cinnamon</li>
+                        <li><span class="font-bold">1/2 tsp</span> Ground Cloves</li>
+                    </ul>
+                    <h3 class="text-lg font-semibold text-primary mt-4 mb-2">Royal Icing (The Glue):</h3>
+                    <ul class="ingredient-list list-none pl-0 text-gray-800">
+                        <li><span class="font-bold">3</span> Large Egg Whites</li>
+                        <li><span class="font-bold">4 cups (480g)</span> Powdered Sugar, sifted</li>
+                        <li><span class="font-bold">1/2 tsp</span> Cream of Tartar</li>
+                    </ul>
+                `,
+            },
+            {
+                title: "2. Mix Wet Ingredients",
+                content: `
+                    <p class="text-gray-700">In a large mixing bowl, use an electric mixer to beat the <span class="font-bold text-ginger">Unsalted Butter</span> and <span class="font-bold text-ginger">Granulated Sugar</span> until the mixture is light and fluffy (about 3-5 minutes). Scrape down the sides of the bowl. </p>
+                    <p class="text-gray-700 mt-3">Beat in the <span class="font-bold text-ginger">Egg</span> and <span class="font-bold text-ginger">Molasses/Corn Syrup</span> until fully combined. The mixture may look slightly separated or curdled; this is okay!</p>
+                `,
+            },
+            {
+                title: "3. Incorporate Dry Ingredients",
+                content: `
+                    <p class="text-gray-700">In a separate bowl, whisk together the <span class="font-bold text-ginger">Flour</span>, <span class="font-bold text-ginger">Ginger</span>, <span class="font-bold text-ginger">Cinnamon</span>, and <span class="font-bold text-ginger">Cloves</span>.</p>
+                    <p class="text-gray-700 mt-3">Gradually add the dry mixture to the wet mixture on low speed. Mix only until the dough comes together and forms a stiff, cohesive ball. <span class="font-bold">Do not overmix!</span> This lean dough will be very stiff—perfect for construction.</p>
+                `,
+            },
+            {
+                title: "4. Roll, Cut, and Shape",
+                content: `
+                    <p class="text-gray-700">Preheat your oven to <span class="font-bold text-ginger">350°F (175°C)</span>. Line baking sheets with parchment paper.</p>
+                    <p class="text-gray-700 mt-3">Roll the dough directly on parchment paper to a uniform <span class="font-bold text-ginger">1/4 inch thickness</span>. This thickness is crucial for strength. Place your template pieces (walls, roof) onto the dough and use a sharp knife or pizza cutter to cut out the shapes. </p>
+                    <p class="text-gray-700 mt-3">Remove excess dough and place the parchment paper with the cut pieces onto the baking sheet.</p>
+                `,
+            },
+            {
+                title: "5. Bake for Strength",
+                content: `
+                    <p class="text-gray-700">Bake the pieces for <span class="font-bold text-ginger">15-20 minutes</span>, depending on size and thickness, until the pieces are deep golden brown, firm to the touch, and completely dry. Overbaking slightly ensures a very sturdy piece.</p>
+                    <p class="text-red-600 font-bold mt-3">⚠️ Critical Step:</p> <p class="text-gray-700">Immediately upon removing the pan from the oven, place your templates back onto the pieces and use a sharp knife to <span class="font-bold">re-cut the edges</span>. This fixes any slight spreading or warping that occurred during baking, ensuring your pieces fit perfectly.</p>
+                    <p class="text-gray-700 mt-3">Cool the pieces completely on the pan before handling.</p>
+                `,
+            },
+            {
+                title: "6. Prepare the Royal Icing (Cement)",
+                content: `
+                    <p class="text-gray-700">This icing acts as the mortar for your house, drying hard and strong.</p>
+                    <ol class="list-decimal list-inside space-y-2 mt-3 text-gray-800">
+                        <li>In a clean, grease-free bowl, beat the <span class="font-bold text-ginger">Egg Whites</span> and <span class="font-bold text-ginger">Cream of Tartar</span> until foamy.</li>
+                        <li>Gradually add the <span class="font-bold text-ginger">Powdered Sugar</span> and beat on high speed until <span class="font-bold">very stiff peaks</span> form. The icing should be thick enough to hold its shape completely. </li>
+                        <li>Keep the icing covered with a damp cloth or plastic wrap when not in use, as it dries quickly. Transfer to a piping bag with a medium round tip.</li>
+                    </ol>
+                `,
+            },
+            {
+                title: "7. Assemble Your Tall House",
+                content: `
+                    <p class="text-gray-700">Find a solid base (like a cutting board or piece of cardboard covered in foil).</p>
+                    <ol class="list-decimal list-inside space-y-2 mt-3 text-gray-800">
+                        <li>Pipe a thick line of Royal Icing onto the base where the first wall will sit.</li>
+                        <li>Pipe icing along the vertical edges of the walls you plan to join.</li>
+                        <li>Press two walls together, holding them for 30–60 seconds. Use small cans or glasses to support the walls temporarily.</li>
+                        <li>Allow the walls to fully set for at least <span class="font-bold text-ginger">1-2 hours</span> before adding the roof. A full 4 hours is better.</li>
+                        <li>Once the walls are stable, pipe a generous line of icing along the top edges and carefully place the roof panels. Support the roof as it dries.</li>
+                    </ol>
+                    <p class="text-gray-700 mt-4 font-bold text-primary">Congratulations! Your sturdy, tall house is now ready for decoration.</p>
+                `,
+            },
+        ];
 
-    <div class="tab-content" id="step1" style="display:none;">
-      <h2>Step 1: Preheat & Prepare</h2>
-      <p>Preheat your oven to 375 °F (≈ 190 °C). Line baking sheets (ungreased or with parchment) and set aside.  [oai_citation:12‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</p>
-    </div>
+        let currentStep = 0;
+        const stepsContainer = document.getElementById('steps-content');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
 
-    <div class="tab-content" id="step2" style="display:none;">
-      <h2>Step 2: Mix Dry Ingredients</h2>
-      <p>In a small bowl, combine the flour, baking soda and salt; stir to blend and set aside.  [oai_citation:13‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</p>
-    </div>
+        // Function to render the current step with animations
+        function renderStep() {
+            // Clear existing content and prepare for animation
+            stepsContainer.innerHTML = '';
+            
+            const stepData = stepsData[currentStep];
 
-    <div class="tab-content" id="step3" style="display:none;">
-      <h2>Step 3: Cream Butter & Sugars, Add Eggs & Vanilla</h2>
-      <p>In a large mixing bowl, beat the softened butter, granulated sugar and brown sugar until creamy. Then add the vanilla extract and beat in the eggs one at a time, mixing well after each addition.  [oai_citation:14‡Nestlé Global](https://www.nestle.com/stories/timeless-discovery-toll-house-chocolate-chip-cookie-recipe?utm_source=chatgpt.com)</p>
-    </div>
+            // Create the new step container
+            const stepDiv = document.createElement('div');
+            stepDiv.className = 'step-container';
+            stepDiv.id = 'step-' + currentStep;
 
-    <div class="tab-content" id="step4" style="display:none;">
-      <h2>Step 4: Combine & Bake</h2>
-      <p>Gradually add the flour mixture into the butter/sugar/egg mixture, beating until well blended. Then stir in the chocolate chips and nuts (if using). Drop by rounded tablespoonfuls onto the prepared baking sheets. Bake for 9–11 minutes or until golden brown. Remove from oven, cool on sheets for 2 minutes, then transfer to wire racks to cool completely.  [oai_citation:15‡Ideal Food Baskets](https://www.idealfoodbaskets.com/recipes/recipe-details/5771?utm_source=chatgpt.com)</p>
-    </div>
+            stepDiv.innerHTML = `
+                <h2 class="text-2xl step-title">${stepData.title}</h2>
+                <div class="text-base">${stepData.content}</div>
+            `;
 
-  </div>
+            stepsContainer.appendChild(stepDiv);
 
-  <script src="script.js"></script>
+            // Force reflow to ensure the transition runs
+            void stepDiv.offsetWidth; 
+
+            // Add 'active' class to start the transition
+            setTimeout(() => {
+                stepDiv.classList.add('active');
+            }, 10); // Small delay to ensure smooth transition
+
+            // Update button states
+            prevBtn.disabled = currentStep === 0;
+            nextBtn.disabled = currentStep === stepsData.length - 1;
+            nextBtn.textContent = currentStep === stepsData.length - 1 ? 'Done!' : 'Next Step →';
+        }
+
+        // Event Listeners for Navigation
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                renderStep();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < stepsData.length - 1) {
+                currentStep++;
+                renderStep();
+            }
+        });
+
+        // Initialize the first step
+        window.onload = renderStep;
+    </script>
 </body>
 </html>
