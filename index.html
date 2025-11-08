@@ -3,278 +3,531 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tall House Cookie Builder</title>
-    <!-- Load Tailwind CSS -->
+    <title>Animated Toll House Cookie Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Configure Tailwind for custom colors and font -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary': '#964B00', // Dark Brown/Gingerbread
-                        'secondary': '#F0F0F0', // Light background
-                        'accent': '#E5E5E5', // Slightly darker highlight
-                        'ginger': '#CC6600',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles for animations and aesthetics */
+        /* Custom styles for smooth transitions and responsiveness */
+        :root {
+            --color-primary: #8b5cf6; /* Indigo-500 */
+            --color-accent: #f59e0b;  /* Amber-500 */
+            --color-background: #fdfcf9; /* Off-white, like parchment paper */
+            --color-card: #ffffff;
+        }
+
         body {
-            background-color: #f7fafc;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 2rem 0;
             font-family: 'Inter', sans-serif;
+            background-color: #f8f1e6; /* Creamy light background */
+            min-height: 100vh;
         }
 
-        .step-container {
+        /* Animation for step content */
+        .step-content {
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-            margin-bottom: 1.5rem;
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            border-left: 5px solid #CC6600; /* Gingerbread border */
+            transform: translateX(20px);
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 1.5rem 0; /* Ensures content padding is maintained */
         }
 
-        .step-container.active {
+        .step-content.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(0);
+            z-index: 10;
         }
 
-        .step-title {
-            color: #964B00;
-            font-weight: 700;
-            border-bottom: 2px solid #E5E5E5;
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
+        .step-content.leaving {
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+            z-index: 5;
         }
 
-        .ingredient-list li {
-            padding: 0.25rem 0;
-            border-bottom: 1px dashed #E5E5E5;
+        /* Progress Bar Styling */
+        #progressBar {
+            transition: width 0.4s ease-in-out;
         }
 
-        /* Button styling */
-        .nav-btn {
-            transition: all 0.2s ease-in-out;
-            font-weight: 600;
-            box-shadow: 0 4px #CC6600;
-        }
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px #CC6600;
-        }
-        .nav-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px #CC6600;
-        }
-        .nav-btn:disabled {
-            background-color: #a0a0a0;
-            box-shadow: 0 4px #707070;
-            cursor: not-allowed;
-            transform: none;
+        /* Custom Button Styling */
+        .btn {
+            @apply px-6 py-3 rounded-xl font-bold transition duration-200 ease-in-out shadow-md;
         }
 
-        .header-bg {
-            background: linear-gradient(135deg, #CC6600 0%, #964B00 100%);
-            color: white;
-            padding: 1.5rem 0;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        .btn-primary {
+            @apply bg-amber-500 text-white hover:bg-amber-600 active:scale-95;
         }
 
-        /* Mobile adjustments */
-        @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-            .max-w-3xl {
-                width: 100%;
-            }
+        .btn-secondary {
+            @apply bg-gray-200 text-gray-700 hover:bg-gray-300 active:scale-95;
+        }
+        
+        /* Loading indicator for TTS */
+        .tts-loading::after {
+            content: '...';
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
         }
     </style>
 </head>
-<body class="bg-secondary">
+<body class="flex items-center justify-center p-4 sm:p-8">
 
-    <div class="max-w-3xl w-full">
-        <!-- Header -->
-        <header class="header-bg rounded-t-xl text-center mb-6">
-            <h1 class="text-4xl font-extrabold tracking-tight">
-                Tall House Cookie Blueprint
-            </h1>
-            <p class="text-white text-opacity-80 mt-2">Sturdy, No-Spread Construction Cookies</p>
+    <div id="app" class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-6 sm:p-10 border-t-8 border-amber-500 transform transition duration-500 ease-in-out">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-gray-800 tracking-tight">🍪 Classic Toll House Cookies 🍪</h1>
+            <p class="text-xl text-gray-500 mt-2">Step-by-Step Baking Guide</p>
         </header>
 
-        <!-- Main Content Area / Steps -->
-        <div id="steps-content" class="p-4">
-            <!-- Steps will be injected here by JavaScript -->
+        <div class="mb-8">
+            <div class="text-sm font-medium text-gray-600 flex justify-between mb-1">
+                <span id="stepTitle" class="text-amber-600">Starting...</span>
+                <span id="stepCounter">0/10</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progressBar" class="bg-amber-500 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
         </div>
 
-        <!-- Navigation Buttons -->
-        <div class="flex justify-between p-4 bg-white rounded-b-xl shadow-lg border-t border-accent">
-            <button id="prevBtn" class="nav-btn bg-ginger text-white py-2 px-6 rounded-lg focus:outline-none" disabled>
-                &larr; Previous
+        <div id="stepContainer" class="relative overflow-hidden min-h-[300px] sm:min-h-[400px] border-b border-gray-200 pb-6 mb-6">
+            </div>
+        
+        <div class="flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0 sm:space-x-4">
+            <button id="prevBtn" class="btn btn-secondary w-full sm:w-1/3" disabled>
+                &larr; Previous Step
             </button>
-            <button id="nextBtn" class="nav-btn bg-ginger text-white py-2 px-6 rounded-lg focus:outline-none">
-                Next Step &rarr;
+            <button id="ttsBtn" class="btn btn-primary w-full sm:w-1/3 flex items-center justify-center" title="Read the current step aloud">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.125 9.75l-4.25 4.25m-3.125-3.125L9.75 9.75m4.25 4.25L9.75 9.75m0 0l-4.25 4.25m4.25-4.25L9.75 9.75m-3.125-3.125l-4.25 4.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Read Step
+            </button>
+            <button id="nextBtn" class="btn btn-primary w-full sm:w-1/3">
+                Start Baking &rarr;
             </button>
         </div>
+        <div id="statusMessage" class="mt-4 text-center text-sm text-red-600 hidden"></div>
 
-        <!-- Info Box for Ingredients/Yield -->
-        <div id="infoBox" class="mt-8 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-sm text-gray-700 rounded-lg shadow-md">
-            <p class="font-bold">Yield:</p> 1 sturdy tall cookie house. <span class="block mt-1">Make sure you have your house template pieces ready before starting!</span>
-        </div>
     </div>
 
     <script>
-        // --- DATA STRUCTURE FOR STEPS ---
-        const stepsData = [
-            {
-                title: "1. Gather Ingredients",
-                content: `
-                    <p class="text-gray-700 mb-4">This recipe is designed for maximum structural integrity. Using unsalted butter and omitting leavening agents prevents spreading.</p>
-                    <h3 class="text-lg font-semibold text-primary mb-2">Cookie Dough Ingredients:</h3>
-                    <ul class="ingredient-list list-none pl-0 text-gray-800">
-                        <li><span class="font-bold">2 1/4 cups (270g)</span> All-Purpose Flour (plus more for dusting)</li>
-                        <li><span class="font-bold">1/2 cup (113g)</span> Unsalted Butter, very soft</li>
-                        <li><span class="font-bold">1 cup (200g)</span> Granulated Sugar</li>
-                        <li><span class="font-bold">1 large</span> Egg</li>
-                        <li><span class="font-bold">1/2 cup (120ml)</span> Dark Molasses or Corn Syrup</li>
-                        <li><span class="font-bold">2 tsp</span> Ground Ginger</li>
-                        <li><span class="font-bold">1 tsp</span> Ground Cinnamon</li>
-                        <li><span class="font-bold">1/2 tsp</span> Ground Cloves</li>
-                    </ul>
-                    <h3 class="text-lg font-semibold text-primary mt-4 mb-2">Royal Icing (The Glue):</h3>
-                    <ul class="ingredient-list list-none pl-0 text-gray-800">
-                        <li><span class="font-bold">3</span> Large Egg Whites</li>
-                        <li><span class="font-bold">4 cups (480g)</span> Powdered Sugar, sifted</li>
-                        <li><span class="font-bold">1/2 tsp</span> Cream of Tartar</li>
-                    </ul>
-                `,
-            },
-            {
-                title: "2. Mix Wet Ingredients",
-                content: `
-                    <p class="text-gray-700">In a large mixing bowl, use an electric mixer to beat the <span class="font-bold text-ginger">Unsalted Butter</span> and <span class="font-bold text-ginger">Granulated Sugar</span> until the mixture is light and fluffy (about 3-5 minutes). Scrape down the sides of the bowl. </p>
-                    <p class="text-gray-700 mt-3">Beat in the <span class="font-bold text-ginger">Egg</span> and <span class="font-bold text-ginger">Molasses/Corn Syrup</span> until fully combined. The mixture may look slightly separated or curdled; this is okay!</p>
-                `,
-            },
-            {
-                title: "3. Incorporate Dry Ingredients",
-                content: `
-                    <p class="text-gray-700">In a separate bowl, whisk together the <span class="font-bold text-ginger">Flour</span>, <span class="font-bold text-ginger">Ginger</span>, <span class="font-bold text-ginger">Cinnamon</span>, and <span class="font-bold text-ginger">Cloves</span>.</p>
-                    <p class="text-gray-700 mt-3">Gradually add the dry mixture to the wet mixture on low speed. Mix only until the dough comes together and forms a stiff, cohesive ball. <span class="font-bold">Do not overmix!</span> This lean dough will be very stiff—perfect for construction.</p>
-                `,
-            },
-            {
-                title: "4. Roll, Cut, and Shape",
-                content: `
-                    <p class="text-gray-700">Preheat your oven to <span class="font-bold text-ginger">350°F (175°C)</span>. Line baking sheets with parchment paper.</p>
-                    <p class="text-gray-700 mt-3">Roll the dough directly on parchment paper to a uniform <span class="font-bold text-ginger">1/4 inch thickness</span>. This thickness is crucial for strength. Place your template pieces (walls, roof) onto the dough and use a sharp knife or pizza cutter to cut out the shapes. </p>
-                    <p class="text-gray-700 mt-3">Remove excess dough and place the parchment paper with the cut pieces onto the baking sheet.</p>
-                `,
-            },
-            {
-                title: "5. Bake for Strength",
-                content: `
-                    <p class="text-gray-700">Bake the pieces for <span class="font-bold text-ginger">15-20 minutes</span>, depending on size and thickness, until the pieces are deep golden brown, firm to the touch, and completely dry. Overbaking slightly ensures a very sturdy piece.</p>
-                    <p class="text-red-600 font-bold mt-3">⚠️ Critical Step:</p> <p class="text-gray-700">Immediately upon removing the pan from the oven, place your templates back onto the pieces and use a sharp knife to <span class="font-bold">re-cut the edges</span>. This fixes any slight spreading or warping that occurred during baking, ensuring your pieces fit perfectly.</p>
-                    <p class="text-gray-700 mt-3">Cool the pieces completely on the pan before handling.</p>
-                `,
-            },
-            {
-                title: "6. Prepare the Royal Icing (Cement)",
-                content: `
-                    <p class="text-gray-700">This icing acts as the mortar for your house, drying hard and strong.</p>
-                    <ol class="list-decimal list-inside space-y-2 mt-3 text-gray-800">
-                        <li>In a clean, grease-free bowl, beat the <span class="font-bold text-ginger">Egg Whites</span> and <span class="font-bold text-ginger">Cream of Tartar</span> until foamy.</li>
-                        <li>Gradually add the <span class="font-bold text-ginger">Powdered Sugar</span> and beat on high speed until <span class="font-bold">very stiff peaks</span> form. The icing should be thick enough to hold its shape completely. </li>
-                        <li>Keep the icing covered with a damp cloth or plastic wrap when not in use, as it dries quickly. Transfer to a piping bag with a medium round tip.</li>
-                    </ol>
-                `,
-            },
-            {
-                title: "7. Assemble Your Tall House",
-                content: `
-                    <p class="text-gray-700">Find a solid base (like a cutting board or piece of cardboard covered in foil).</p>
-                    <ol class="list-decimal list-inside space-y-2 mt-3 text-gray-800">
-                        <li>Pipe a thick line of Royal Icing onto the base where the first wall will sit.</li>
-                        <li>Pipe icing along the vertical edges of the walls you plan to join.</li>
-                        <li>Press two walls together, holding them for 30–60 seconds. Use small cans or glasses to support the walls temporarily.</li>
-                        <li>Allow the walls to fully set for at least <span class="font-bold text-ginger">1-2 hours</span> before adding the roof. A full 4 hours is better.</li>
-                        <li>Once the walls are stable, pipe a generous line of icing along the top edges and carefully place the roof panels. Support the roof as it dries.</li>
-                    </ol>
-                    <p class="text-gray-700 mt-4 font-bold text-primary">Congratulations! Your sturdy, tall house is now ready for decoration.</p>
-                `,
-            },
-        ];
-
-        let currentStep = 0;
-        const stepsContainer = document.getElementById('steps-content');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-
-        // Function to render the current step with animations
-        function renderStep() {
-            // Clear existing content and prepare for animation
-            stepsContainer.innerHTML = '';
-            
-            const stepData = stepsData[currentStep];
-
-            // Create the new step container
-            const stepDiv = document.createElement('div');
-            stepDiv.className = 'step-container';
-            stepDiv.id = 'step-' + currentStep;
-
-            stepDiv.innerHTML = `
-                <h2 class="text-2xl step-title">${stepData.title}</h2>
-                <div class="text-base">${stepData.content}</div>
-            `;
-
-            stepsContainer.appendChild(stepDiv);
-
-            // Force reflow to ensure the transition runs
-            void stepDiv.offsetWidth; 
-
-            // Add 'active' class to start the transition
-            setTimeout(() => {
-                stepDiv.classList.add('active');
-            }, 10); // Small delay to ensure smooth transition
-
-            // Update button states
-            prevBtn.disabled = currentStep === 0;
-            nextBtn.disabled = currentStep === stepsData.length - 1;
-            nextBtn.textContent = currentStep === stepsData.length - 1 ? 'Done!' : 'Next Step →';
+        // FIX: Declared apiKey globally to resolve the 403 Permission Denied error for TTS.
+        const apiKey = ""; 
+        
+        // TTS helper functions
+        // Convert base64 string to ArrayBuffer
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
         }
 
-        // Event Listeners for Navigation
-        prevBtn.addEventListener('click', () => {
-            if (currentStep > 0) {
-                currentStep--;
-                renderStep();
-            }
-        });
+        // Convert PCM data to a WAV Blob (necessary for browser audio playback)
+        function pcmToWav(pcmData, sampleRate) {
+            const numChannels = 1;
+            const bytesPerSample = 2; // 16-bit PCM
+            const blockAlign = numChannels * bytesPerSample;
+            const byteRate = sampleRate * blockAlign;
 
+            const buffer = new ArrayBuffer(44 + pcmData.length * bytesPerSample);
+            const view = new DataView(buffer);
+            let offset = 0;
+
+            // Write RIFF header
+            function writeString(s) {
+                for (let i = 0; i < s.length; i++) {
+                    view.setUint8(offset + i, s.charCodeAt(i));
+                }
+                offset += s.length;
+            }
+
+            writeString('RIFF');
+            view.setUint32(offset, 36 + pcmData.length * bytesPerSample, true); offset += 4;
+            writeString('WAVE');
+
+            // Write fmt chunk
+            writeString('fmt ');
+            view.setUint32(offset, 16, true); offset += 4; // Chunk size
+            view.setUint16(offset, 1, true); offset += 2; // Audio format (1 for PCM)
+            view.setUint16(offset, numChannels, true); offset += 2;
+            view.setUint32(offset, sampleRate, true); offset += 4;
+            view.setUint32(offset, byteRate, true); offset += 4;
+            view.setUint16(offset, blockAlign, true); offset += 2;
+            view.setUint16(offset, bytesPerSample * 8, true); offset += 2; // Bits per sample
+
+            // Write data chunk
+            writeString('data');
+            view.setUint32(offset, pcmData.length * bytesPerSample, true); offset += 4;
+
+            // Write PCM data
+            for (let i = 0; i < pcmData.length; i++) {
+                view.setInt16(offset, pcmData[i], true);
+                offset += 2;
+            }
+
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        /**
+         * Generates and plays TTS audio for the current step.
+         */
+        async function generateTTS(text) {
+            const ttsBtn = document.getElementById('ttsBtn');
+            const originalBtnText = ttsBtn.innerHTML;
+            const statusMessage = document.getElementById('statusMessage');
+            
+            statusMessage.classList.add('hidden');
+            ttsBtn.disabled = true;
+            ttsBtn.innerHTML = `<span class="tts-loading">Generating Audio...</span>`;
+
+            // Extract only the visible text content from the step for TTS
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = text;
+            // Clean up the text: remove excess whitespace and non-essential characters
+            const speechText = tempDiv.textContent.replace(/[\n\t]/g, ' ').replace(/\s{2,}/g, ' ').trim();
+
+            if (!speechText) {
+                statusMessage.textContent = 'No text content available to read.';
+                statusMessage.classList.remove('hidden');
+                ttsBtn.innerHTML = originalBtnText;
+                ttsBtn.disabled = false;
+                return;
+            }
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: speechText }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: "Puck" }
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.text();
+                    console.error(`API call failed with status ${response.status}. Body: ${errorBody}`);
+                    statusMessage.textContent = 'Audio generation failed. Check API key/status.';
+                    statusMessage.classList.remove('hidden');
+                    throw new Error(`API call failed: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType;
+
+                if (audioData && mimeType && mimeType.startsWith("audio/L16")) {
+                    const rateMatch = mimeType.match(/rate=(\d+)/);
+                    const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
+                    
+                    const pcmData = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(pcmData);
+                    const wavBlob = pcmToWav(pcm16, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+
+                    ttsBtn.innerHTML = originalBtnText.replace("Read Step", "Playing...");
+                    
+                    audio.onended = () => {
+                        URL.revokeObjectURL(audioUrl); // Clean up the object URL
+                        ttsBtn.innerHTML = originalBtnText;
+                        ttsBtn.disabled = false;
+                    };
+                    return; 
+                } else {
+                    statusMessage.textContent = 'Invalid audio response format.';
+                    statusMessage.classList.remove('hidden');
+                    throw new Error("Invalid audio response structure.");
+                }
+            } catch (error) {
+                console.error("TTS failed:", error);
+                statusMessage.textContent = 'An error occurred while fetching the audio.';
+                statusMessage.classList.remove('hidden');
+                ttsBtn.innerHTML = originalBtnText;
+                ttsBtn.disabled = false;
+            }
+        }
+
+        // --- Recipe Steps Data ---
+        const STEPS = [
+            {
+                title: "Gather Your Ingredients & Prep",
+                content: `
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">You will need:</h3>
+                    <ul class="space-y-2 list-disc list-inside text-gray-700 text-lg">
+                        <li><strong>2 ¼ cups</strong> All-Purpose Flour</li>
+                        <li><strong>1 tsp</strong> Baking Soda</li>
+                        <li><strong>1 cup (2 sticks)</strong> Unsalted Butter, softened to room temperature</li>
+                        <li><strong>¾ cup</strong> Granulated Sugar</li>
+                        <li><strong>¾ cup</strong> Packed Brown Sugar</li>
+                        <li><strong>1 tsp</strong> Vanilla Extract</li>
+                        <li><strong>2</strong> Large Eggs</li>
+                        <li><strong>2 cups (12 oz pkg)</strong> Semi-Sweet Chocolate Chips</li>
+                        <li>*Optional: 1 cup chopped nuts (if omitting, add 1-2 Tbsp extra flour)</li>
+                    </ul>
+                    <p class="mt-4 p-3 bg-gray-100 rounded-lg text-sm">
+                        Preheat your oven to <strong>375°F (190°C)</strong>. Line your baking sheets with parchment paper or silicone mats.
+                    </p>
+                `,
+                key: 'prep'
+            },
+            {
+                title: "Mix Dry Ingredients",
+                content: `
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Whisk Together:</h3>
+                    <div class="p-4 bg-blue-50 rounded-lg shadow-inner text-gray-700">
+                        <p class="text-xl font-semibold">In a small bowl, combine:</p>
+                        <ul class="mt-2 space-y-1 text-lg list-disc list-inside">
+                            <li><strong>2 ¼ cups</strong> All-Purpose Flour</li>
+                            <li><strong>1 tsp</strong> Baking Soda</li>
+                        </ul>
+                        <p class="mt-3 text-sm italic">Use a whisk to fully combine and aerate the ingredients. Set aside. (Note: No extra salt is included in this recipe.)</p>
+                    </div>
+                `,
+                key: 'dry_mix'
+            },
+            {
+                title: "Cream Butter and Sugars",
+                content: `
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Creaming for Fluffy Cookies:</h3>
+                    <div class="p-4 bg-yellow-50 rounded-lg shadow-inner text-gray-700">
+                        <p class="text-xl font-semibold">In a large bowl or stand mixer, beat:</p>
+                        <ul class="mt-2 space-y-1 text-lg list-disc list-inside">
+                            <li><strong>1 cup</strong> Unsalted Butter (softened)</li>
+                            <li><strong>¾ cup</strong> Granulated Sugar</li>
+                            <li><strong>¾ cup</strong> Packed Brown Sugar</li>
+                        </ul>
+                        <p class="mt-3 text-sm italic">Beat until the mixture is **light, pale, and fluffy** (about 3-5 minutes). This incorporates air, which is key for soft cookies!</p>
+                    </div>
+                `,
+                key: 'cream_butter'
+            },
+            {
+                title: "Add Eggs and Vanilla",
+                content: `
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Adding the Liquids:</h3>
+                    <div class="p-4 bg-red-50 rounded-lg shadow-inner text-gray-700">
+                        <p class="text-xl font-semibold">With the mixer running at low speed, add:</p>
+                        <ul class="mt-2 space-y-1 text-lg list-disc list-inside">
+                            <li><strong>1 tsp</strong> Vanilla Extract</li>
+                            <li><strong>2 Large Eggs</strong> (Add them *one at a time*, beating well after each addition to ensure they are fully incorporated.)</li>
+                        </ul>
+                        <p class="mt-3 text-sm italic">Scrape down the sides of the bowl between additions.</p>
+                    </div>
+                `,
+                key: 'wet_mix'
+            },
+            {
+                title: "Combine Wet and Dry",
+                content: `
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Mixing the Dough:</h3>
+                    <div class="p-4 bg-green-50 rounded-lg shadow-inner text-gray-700">
+                        <p class="text-xl font-semibold">Gradually add the reserved **flour mixture** to the wet ingredients.</p>
+                        <p class="mt-2 text-lg">Mix only until just combined. **Do not overmix!** Overmixing develops gluten, which can make your cookies tough.</p>
+                    </div>
+                    <p class="mt-4 text-sm italic text-gray-500">Stop mixing as soon as you see no streaks of dry flour.</p>
+                `,
+                key: 'combine_all'
+            },
+            {
+                title: "Fold in Chocolate Chips",
+                content: `
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">The Best Part: Chocolate!</h3>
+                    <div class="p-4 bg-fuchsia-50 rounded-lg shadow-inner text-gray-700">
+                        <p class="text-xl font-semibold">Using a rubber spatula, gently fold in:</p>
+                        <ul class="mt-2 space-y-1 text-lg list-disc list-inside">
+                            <li><strong>2 cups</strong> Semi-Sweet Chocolate Chips</li>
+                            <li>**1 cup** Chopped Nuts (if using)</li>
+                        </ul>
+                        <p class="mt-3 text-sm italic">Keep folding until the chips are evenly distributed throughout the dough.</p>
+                    </div>
+                `,
+                key: 'fold_chips'
+            },
+            {
+                title: "Scoop and Place",
+                content: `
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Preparing the Baking Sheet:</h3>
+                    <div class="p-4 bg-teal-50 rounded-lg shadow-inner text-gray-700">
+                        <p class="text-xl font-semibold">Drop rounded tablespoon-sized scoops of dough onto your prepared baking sheet.</p>
+                        <p class="mt-2 text-lg">Ensure they are spaced about **2 inches apart** to allow for spreading.</p>
+                    </div>
+                    <p class="mt-4 text-sm italic text-gray-500">For best results, consider chilling the dough for 30 minutes before scooping to prevent excessive spreading.</p>
+                `,
+                key: 'scoop'
+            },
+            {
+                title: "Bake!",
+                content: `
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Time in the Oven:</h3>
+                    <div class="p-4 bg-orange-50 rounded-lg shadow-inner text-gray-700 text-center">
+                        <p class="text-3xl font-extrabold text-orange-700">Bake for **9 to 11 minutes**</p>
+                        <p class="mt-2 text-lg">...at 375°F (190°C) or until the edges are golden brown and the centers are still slightly soft.</p>
+                    </div>
+                    <p class="mt-4 text-sm italic text-gray-500">The cookies will continue to cook slightly once out of the oven. Remove them when they look *just* done for a softer, chewier cookie.</p>
+                `,
+                key: 'bake'
+            },
+            {
+                title: "Cooling Process",
+                content: `
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">The Final Touches:</h3>
+                    <div class="p-4 bg-indigo-50 rounded-lg shadow-inner text-gray-700">
+                        <p class="text-xl font-semibold">1. Rest on Baking Sheet:</p>
+                        <p class="mt-1 ml-4 text-lg">Let the cookies cool on the baking sheet for **2 minutes**.</p>
+                        
+                        <p class="text-xl font-semibold mt-3">2. Transfer to Rack:</p>
+                        <p class="mt-1 ml-4 text-lg">Carefully move them to a wire rack to **cool completely**. This prevents the bottoms from becoming soggy.</p>
+                    </div>
+                `,
+                key: 'cool'
+            },
+            {
+                title: "Enjoy Your Cookies!",
+                content: `
+                    <h3 class="text-2xl font-bold text-amber-600 mb-4 text-center">Success! 🎉</h3>
+                    <div class="text-center p-6 bg-lime-50 rounded-xl shadow-lg">
+                        <p class="text-4xl">😋</p>
+                        <p class="text-xl mt-4 text-gray-800 font-medium">You've baked a delicious batch of chocolate chip cookies!</p>
+                        <p class="text-md mt-2 text-gray-600">Recipe yields about 30 cookies. Grab a glass of milk!</p>
+                    </div>
+                `,
+                key: 'finish'
+            }
+        ];
+
+        let currentStepIndex = 0;
+        const stepContainer = document.getElementById('stepContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const ttsBtn = document.getElementById('ttsBtn');
+        const progressBar = document.getElementById('progressBar');
+        const stepCounter = document.getElementById('stepCounter');
+        const stepTitle = document.getElementById('stepTitle');
+
+        /**
+         * Renders the current step content with a transition effect.
+         * @param {number} direction - 1 for next, -1 for previous, 0 for initial load.
+         */
+        function renderStep(direction) {
+            const newStep = STEPS[currentStepIndex];
+            
+            // 1. Mark the old content as leaving (if it exists)
+            const oldContent = stepContainer.querySelector('.step-content.active');
+            if (oldContent) {
+                oldContent.classList.remove('active');
+                oldContent.classList.add('leaving');
+                // Wait for the leaving animation to finish before removing
+                setTimeout(() => oldContent.remove(), 200); 
+            }
+
+            // 2. Create and insert the new content
+            const newDiv = document.createElement('div');
+            newDiv.className = 'step-content';
+            
+            const contentWrapper = document.createElement('div');
+            contentWrapper.className = 'relative p-4 rounded-xl border border-gray-100 shadow-sm';
+            contentWrapper.innerHTML = newStep.content;
+            newDiv.appendChild(contentWrapper);
+
+            // Determine if the new content should slide from the right or left
+            if (direction === 1) {
+                newDiv.style.transform = 'translateX(20px)';
+            } else if (direction === -1) {
+                newDiv.style.transform = 'translateX(-20px)';
+            }
+            
+            stepContainer.appendChild(newDiv);
+            
+            // Trigger the transition after a very short delay
+            setTimeout(() => {
+                newDiv.classList.add('active');
+                newDiv.style.transform = 'translateX(0)';
+            }, 50);
+
+            // 3. Update UI controls
+            updateUI(newStep.title);
+        }
+
+        /**
+         * Updates the progress bar and button states.
+         */
+        function updateUI(title) {
+            const totalSteps = STEPS.length;
+            const progress = (currentStepIndex + 1) / totalSteps;
+
+            progressBar.style.width = `${progress * 100}%`;
+            stepCounter.textContent = `${currentStepIndex + 1}/${totalSteps}`;
+            stepTitle.textContent = title;
+
+            // Enable/disable buttons based on current step
+            prevBtn.disabled = currentStepIndex === 0;
+            nextBtn.disabled = currentStepIndex === totalSteps - 1;
+            ttsBtn.disabled = false; // Always enabled unless audio is playing/loading
+
+            // Update text on next button for the final step
+            if (currentStepIndex === totalSteps - 2) {
+                nextBtn.textContent = "Finish & Review 🎉";
+            } else if (currentStepIndex === totalSteps - 1) {
+                nextBtn.textContent = "All Done!";
+            } else {
+                nextBtn.textContent = "Next Step &rarr;";
+            }
+        }
+
+        // Event listeners for navigation
         nextBtn.addEventListener('click', () => {
-            if (currentStep < stepsData.length - 1) {
-                currentStep++;
-                renderStep();
+            if (currentStepIndex < STEPS.length - 1) {
+                currentStepIndex++;
+                renderStep(1); // 1 for forward animation
             }
         });
 
-        // Initialize the first step
-        window.onload = renderStep;
+        prevBtn.addEventListener('click', () => {
+            if (currentStepIndex > 0) {
+                currentStepIndex--;
+                renderStep(-1); // -1 for backward animation
+            }
+        });
+
+        ttsBtn.addEventListener('click', () => {
+            const currentStep = STEPS[currentStepIndex];
+            generateTTS(currentStep.title + ". " + currentStep.content);
+        });
+
+        // Initialize the app with the first step
+        window.onload = () => {
+            renderStep(0); // 0 for no initial direction
+        };
+
     </script>
 </body>
 </html>
